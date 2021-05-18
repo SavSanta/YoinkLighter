@@ -1,17 +1,17 @@
 
 # LimeLighter
 
-A tool which creates a spoof code signing certificates and sign binaries and DLL files to help evade EDR products and avoid MSS and sock scruitney. LimeLighter can also use valid code signing certificates to sign files. Limelighter can use a fully qualified domain name such as `acme.com`.
+A tool for code-signing and certificate spoofing of binaries and DLL files to help evade EDR products and avoid MSS and sock scrutiny. LimeLighter can also use valid code signing certificates to sign files. Limelighter can use a fully qualified domain (FQDN) (e.g.`acme.com).
 
 
 ## Contributing
-LimeLighter was developed in golang.
+LimeLighter is written in Golang.
 
-Make sure that the following are installed on your OS 
+Make sure that the following is installed on your machine: 
 
 ```
-openssl
-osslsigncode
+openssl (https://github.com/openssl/openssl)
+osslsigncode (https://github.com/mtrojnar/osslsigncode)
 ```
 
 The first step as always is to clone the repo. Before you compile LimeLighter you'll need to install the dependencies. To install them, run following commands:
