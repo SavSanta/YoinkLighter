@@ -245,10 +245,10 @@ func ResourceTake(source string, destination string) {
 
 func options() *FlagOptions {
 	certmode := flag.String("Certmode", "NONE", "Select a mode to apply the certificate. [STEAL, PFXSIGN, or NONE]")
-	outFile := flag.String("O", "", "Output file name")
-	inputFile := flag.String("I", "", "Unsigned file name to be signed")
+	outFile := flag.String("O", "", "Output filename")
+	inputFile := flag.String("I", "", "Input filename to be signed/yoinked")
 	take := flag.String("Yoink", "", "Existing EXE/DLL file to yoink (take) ICON and file info from.")
-	domain := flag.String("Domain", "", "Domain you want to create a fake code sign for")
+	domain := flag.String("Domain", "", "Domain to use when creating a fake code sign")
 	password := flag.String("Password", "", "Password for real certificate")
     real := flag.String("Real", "", "Path to a valid .pfx certificate file")
 	verify := flag.String("Verify", "", "Verifies a file's code sign certificate")
