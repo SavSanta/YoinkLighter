@@ -295,8 +295,8 @@ fmt.Println()
 	// TODO: Reflow this for finalized production after lib change. Or entirely change up their argparsing for readability.
 	// Currently this is made to work with their flow and our flow.
 	if opt.certmode == "STEAL" {
-
-		fmt.Println("[*] Stealing certificate from " + opt.inputFile + " to" + opt.outFile)
+		fmt.Println(color.BlueString("[+] ") + "Certmode set to STEAL.")
+		fmt.Println("[*] Stealing cert from " + opt.inputFile + " to " + opt.outFile)
 		signedFile := StealSignature(opt.inputFile, opt.outFile)
 
 		if opt.take != "" {
@@ -306,6 +306,7 @@ fmt.Println()
 
 	} else if opt.certmode == "PFXSIGN" {
 
+		fmt.Println(color.BlueString("[+] ") + "Certmode set to PFXSIGN.")
 		if opt.real != "" {
 			// Using a valid code-signing cert/
 			fmt.Println("[*] Signing " + opt.inputFile + " with a real valid code-signing cert " + opt.real)
@@ -330,8 +331,9 @@ fmt.Println()
 		fmt.Println(color.GreenString("[+] ") + "Signed file created.")
 
 	}  else if opt.certmode == "NONE" {
-		// Possibly they just ran an a YOINK or VERIFY
-		fmt.Println(color.RedString("[+] ") + "ExecYoinkLighter execution Finished.")
+		// Possibly they just ran an a YOINK or VERIFY. Though let's let them know
+		fmt.Println(color.BlueString("[+] ") + "Certmode was set to NONE.")
+		fmt.Println(color.GreenString("[+] ") + "YoinkLighter execution Finished.")
 	}
 
 }
