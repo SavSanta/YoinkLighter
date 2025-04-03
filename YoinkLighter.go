@@ -48,6 +48,7 @@ func printDebug(format string, v ...interface{}) {
 }
 
 const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+const __APPVERSION__ = "2025.04.03"
 
 func VarNumberLength(min, max int) string {
 	var r string
@@ -259,16 +260,16 @@ func options() *FlagOptions {
 }
 
 func main() {
-	fmt.Println(`
+	fmt.Printf(`
 _____.___.      .__        __   .____    .__       .__     __
 \__  |   | ____ |__| ____ |  | _|    |   |__| ____ |  |___/  |_  ___________
  /   |   |/  _ \|  |/    \|  |/ /    |   |  |/ ___\|  |  \   __\/ __ \_  __ \
  \____   (  <_> )  |   |  \    <|    |___|  / /_/  >   Y  \  | \  ___/|  | \/
  / ______|\____/|__|___|  /__|_ \_______ \__\___  /|___|  /__|  \___  >__|
  \/                     \/     \/       \/ /_____/      \/          \/
-                                            @Savsanta	
-	
-[*] A Tool for Code Signing... Real or Fake`)
+                                            @Savsanta		vers. %s
+
+[*] A Tool for Code Signing... Real or Fake\n`, __APPVERSION__)
 	opt := options()
 	if opt.verify == "" && opt.inputFile == "" && opt.outFile == "" {
 		log.Fatal("Error: Please provide a file to sign or a file check")
