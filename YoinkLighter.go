@@ -269,7 +269,8 @@ _____.___.      .__        __   .____    .__       .__     __
  \/                     \/     \/       \/ /_____/      \/          \/
                                             @Savsanta		vers. %s
 
-[*] A Tool for Code Signing... Real or Fake\n`, __APPVERSION__)
+[*] A Tool for Code Signing... Real or Fake`, __APPVERSION__)
+fmt.Println()
 	opt := options()
 	if opt.verify == "" && opt.inputFile == "" && opt.outFile == "" {
 		log.Fatal("Error: Please provide a file to sign or a file check")
