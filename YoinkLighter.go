@@ -29,6 +29,7 @@ type FlagOptions struct {
 	real      string
 	verify    string
     take  string
+	certmode string
 }
 
 var (
@@ -192,7 +193,7 @@ func ResourceTake(source string, destination string) {
     srcRes0 := yoinkfuncs.LoadAllResourcesFromPath(source)
 	ico := yoinkfuncs.SearchForCommonICOGroups(srcRes0)
     
-    rawfiRes := yoinkfuncs.GetSpecRawResTypeData(srcRes0, 0x10) //Grab File Information Resource
+    rawfiRes := yoinkfuncs.GetSpecRawResTypeData(srcRes0, 0x10)
     vi := yoinkfuncs.GetRawVersionInfo(rawfiRes)
 	jdata := yoinkfuncs.GetVersionInfoAsJSON(vi)
     ogfvi := yoinkfuncs.GetSrcFileVersionData(jdata)
@@ -206,9 +207,10 @@ func ResourceTake(source string, destination string) {
 }
 
 func options() *FlagOptions {
-	outFile := flag.String("O", "", "Signed file name")
+	certmode := flag.String("Certmode", "NONE", "Select a mode to apply the certificate. [STEAL, PFXSIGN, or NONE]")
+	outFile := flag.String("O", "", "Output file name")
 	inputFile := flag.String("I", "", "Unsigned file name to be signed")
-	take := flag.String("Yoink", "", "Path to an existing EXE/DLL to yoink (take) ICON and file info from")
+	take := flag.String("Yoink", "", "Existing EXE/DLL file to yoink (take) ICON and file info from.")
 	domain := flag.String("Domain", "", "Domain you want to create a fake code sign for")
 	password := flag.String("Password", "", "Password for real certificate")
     real := flag.String("Real", "", "Path to a valid .pfx certificate file")
@@ -217,7 +219,7 @@ func options() *FlagOptions {
 	flag.Parse()
 	debugging = *debug
 	debugWriter = os.Stdout
-	return &FlagOptions{outFile: *outFile, inputFile: *inputFile, take: *take,domain: *domain, password: *password, real: *real, verify: *verify}
+	return &FlagOptions{outFile: *outFile, inputFile: *inputFile, take: *take, certmode: *certmode, domain: *domain, password: *password, real: *real, verify: *verify}
 }
 
 func main() {
