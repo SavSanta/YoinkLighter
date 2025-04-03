@@ -8,6 +8,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -15,6 +16,7 @@ import (
 	crand "math/rand"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -188,6 +190,40 @@ func Check(check string) {
 	}
 }
 
+func StealSignature(stealExe string, destExe string) string {
+
+	File := filepath.Base(stealExe)
+	sigFile := File + ".sig"
+	//fmt.Println(sigFile)
+	cmd := exec.Command("osslsigncode", "extract-signature", "-in", ""+stealExe+"", "-out", ""+sigFile+"")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	fmt.Println(color.GreenString("[*] ") + "Dumped signature from " + File + " to " + sigFile)
+	if err != nil {
+			log.Fatalf("cmd.Run() failed with %s\n", err)
+	}
+
+	destExeName := filepath.Base(destExe)
+	sDestExe  := "s-" + destExeName
+	att := exec.Command("osslsigncode", "attach-signature", "-sigin", ""+sigFile+"", "-in", ""+destExe+"", "-out", sDestExe, "-CAfile", "/dev/null")                                                                                                  
+	//att.Stdout = os.Stdout
+	//att.Stdout = os.Stderr
+	//attErr := att.Run()
+	att.Run()
+	fmt.Println(color.GreenString("[*] ") + "Injected stolen signature into " + destExe)
+	//if attErr != nil {
+	//      log.Fatalf("att.Run() failed with %s\n", attErr)
+	//}
+
+	// Check the s-SignedFile.exe
+	if _, err := os.Stat(sDestExe); errors.Is(err, os.ErrNotExist) {
+		log.Fatalf("Could not create the %s with a stolen cert %s", sDestExe, err.Error())
+	}
+
+	return sDestExe
+}
+
 func ResourceTake(source string, destination string) {
     
     srcRes0 := yoinkfuncs.LoadAllResourcesFromPath(source)
@@ -253,30 +289,47 @@ _____.___.      .__        __   .____    .__       .__     __
 		Check(opt.verify)
 		os.Exit(3)
 	}
-	if opt.real != "" {
-		fmt.Println("[*] Signing " + opt.inputFile + " with a valid cert " + opt.real)
-		SignExecutable(opt.password, opt.real, opt.inputFile, opt.outFile)
-    }
-	if opt.take != "" {
-		fmt.Println("[*] Yoinking icon and file info from " + opt.take + " for target " + opt.inputFile)
-        ResourceTake(opt.take, opt.inputFile)
-		SignExecutable(opt.password, opt.real, opt.inputFile, opt.outFile)
-	} else {
-		password := VarNumberLength(8, 12)
-		pfx := opt.domain + ".pfx"
-		fmt.Println("[*] Signing " + opt.inputFile + " with a fake cert")
-		GenerateCert(opt.domain, opt.inputFile)
-		GeneratePFK(password, opt.domain)
-		SignExecutable(password, pfx, opt.inputFile, opt.outFile)
 
+	// TODO: Reflow this for finalized production after lib change. Or entirely change up their argparsing for readability.
+	// Currently this is made to work with their flow and our flow.
+	if opt.certmode == "STEAL" {
+
+		fmt.Println("[*] Stealing certificate from " + opt.inputFile + " to" + opt.outFile)
+		signedFile := StealSignature(opt.inputFile, opt.outFile)
+
+		if opt.take != "" {
+			fmt.Println("[*] Yoinking icon and file info from " + opt.take + " for target " + signedFile)
+			ResourceTake(opt.take, signedFile)
+		} 
+
+	} else if opt.certmode == "PFXSIGN" {
+
+		if opt.real != "" {
+			// Using a valid code-signing cert/
+			fmt.Println("[*] Signing " + opt.inputFile + " with a real valid code-signing cert " + opt.real)
+			SignExecutable(opt.password, opt.real, opt.inputFile, opt.outFile)
+		} else {
+			// Generating a cert and signing
+			password := VarNumberLength(8, 12)
+			pfx := opt.domain + ".pfx"
+			fmt.Println("[*] Signing " + opt.inputFile + " with a fake cert")
+			GenerateCert(opt.domain, opt.inputFile)
+			GeneratePFK(password, opt.domain)
+			SignExecutable(password, pfx, opt.inputFile, opt.outFile)
+		}
+
+		fmt.Println("[*] Cleaning up....")
+		printDebug("[!] Deleting " + opt.domain + ".pem\n")
+		os.Remove(opt.domain + ".pem")
+		printDebug("[!] Deleting " + opt.domain + ".key\n")
+		os.Remove(opt.domain + ".key")
+		printDebug("[!] Deleting " + opt.domain + ".pfx\n")
+		os.Remove(opt.domain + ".pfx")
+		fmt.Println(color.GreenString("[+] ") + "Signed file created.")
+
+	}  else if opt.certmode == "NONE" {
+		// Possibly they just ran an a YOINK or VERIFY
+		fmt.Println(color.RedString("[+] ") + "ExecYoinkLighter execution Finished.")
 	}
-	fmt.Println("[*] Cleaning up....")
-	printDebug("[!] Deleting " + opt.domain + ".pem\n")
-	os.Remove(opt.domain + ".pem")
-	printDebug("[!] Deleting " + opt.domain + ".key\n")
-	os.Remove(opt.domain + ".key")
-	printDebug("[!] Deleting " + opt.domain + ".pfx\n")
-	os.Remove(opt.domain + ".pfx")
-	fmt.Println(color.GreenString("[+] ") + "Signed File Created.")
 
 }
