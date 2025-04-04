@@ -48,7 +48,7 @@ func printDebug(format string, v ...interface{}) {
 }
 
 const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-const __APPVERSION__ = "2025.04.03"
+const __APPVERSION__ = "2025.04.04"
 
 func VarNumberLength(min, max int) string {
 	var r string
