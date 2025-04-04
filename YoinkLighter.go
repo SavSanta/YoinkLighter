@@ -244,13 +244,18 @@ func ResourceTake(source string, destination string) {
 }
 
 func options() *FlagOptions {
+	// Support Both Long and Short forms
 	certmode := flag.String("Certmode", "NONE", "Select a mode to apply the certificate. [STEAL, PFXSIGN, or NONE]")
-	outFile := flag.String("O", "", "Output filename")
-	inputFile := flag.String("I", "", "Input filename to be signed/yoinked")
+	flag.StringVar(certmode, "C", *certmode, "Select a mode to apply the certificate. [STEAL, PFXSIGN, or NONE]") // short form for Certmode
 	take := flag.String("Yoink", "", "Existing EXE/DLL file to yoink (take) ICON and file info from.")
+	flag.StringVar(take, "Y", *take, "Existing EXE/DLL file to yoink (take) ICON and file info from.") // short form for Yoink
+	outFile := flag.String("O", "", "Output target to apply the signing to")
+	flag.String("Output", "", "Output target to apply the signing to")
+	inputFile := flag.String("I", "", "Input filename to be signing.")
+	flag.String("Input", "", "Input filename to be used for signing.")
 	domain := flag.String("Domain", "", "Domain to use when creating a fake code sign")
 	password := flag.String("Password", "", "Password for real certificate")
-    real := flag.String("Real", "", "Path to a valid .pfx certificate file")
+	real := flag.String("Real", "", "Path to a valid .pfx certificate file")
 	verify := flag.String("Verify", "", "Verifies a file's code sign certificate")
 	debug := flag.Bool("debug", false, "Print debug statements")
 	flag.Parse()
