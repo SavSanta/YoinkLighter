@@ -48,7 +48,7 @@ func printDebug(format string, v ...interface{}) {
 }
 
 const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-const __APPVERSION__ = "2025.04.04"
+const __APPVERSION__ = "2025.04.04J"
 
 func VarNumberLength(min, max int) string {
 	var r string
@@ -287,9 +287,6 @@ fmt.Println()
 	if opt.verify == "" && opt.outFile == "" {
 		log.Fatal("Error: Please provide a name for the signed file")
 	}
-	if opt.real == "" && opt.domain == "" && opt.verify == "" {
-		log.Fatal("Error: Please specify a valid path to a .pfx file or specify the domain to spoof")
-	}
 
 	if opt.verify != "" {
 		fmt.Println("[*] Checking code signed on file: " + opt.verify)
@@ -311,6 +308,10 @@ fmt.Println()
 
 	} else if opt.certmode == "PFXSIGN" {
 
+		if opt.real == "" && opt.domain == "" && opt.verify == "" {
+			log.Fatal("Error: Please specify a valid path to a .pfx file or specify the domain to spoof")
+		}
+	
 		fmt.Println(color.BlueString("[+] ") + "Certmode set to PFXSIGN.")
 		if opt.real != "" {
 			// Using a valid code-signing cert/
