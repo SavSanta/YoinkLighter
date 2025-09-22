@@ -10,7 +10,7 @@ YoinkLighter can use a fully qualified domain name such as `acme.com`.
 Additionally, YoinkLighter allows supports the ability to yoink (take) embedded icons, file information, and certificates from an existing file.
 
 YoinkLighter is a fork of the @Tylous LimeLighter GoLang project.
-The intent was in addition to it's innate orgiginal functions utilize pure GoLang to perform additional Portable Executable (PE) manipulations. 
+The intent was in addition to it's innate original functions utilize pure GoLang to perform additional Portable Executable (PE) manipulations. 
 
 ## Installation
 Make sure that the following are installed on your OS 
